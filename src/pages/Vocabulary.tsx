@@ -1,3 +1,5 @@
+import { QuizContainer } from "@/components/quiz/QuizContainer";
+
 export default function Vocabulary() {
-  return <h1>Vocabularyページ</h1>;
+  return <QuizContainer />;
 }
