@@ -1,50 +1,30 @@
-# React + TypeScript + Vite
+# Web Vocabulary
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[単語帳 Web アプリ](https://web-vocabulary.vercel.app/)
 
-Currently, two official plugins are available:
+これは、英単語学習のための Web アプリケーションです。Vite と React を使用して構築されています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 主な機能
 
-## Expanding the ESLint configuration
+- **単語帳**: 単語とその意味の一覧を表示します。
+- **クイズ**: 登録された単語からクイズを出題し、学習の定着度を確認できます。
+- **単語の追加**: 新しい単語をリストに追加する機能も備えています。
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## ローカル環境での実行方法
 
-- Configure the top-level `parserOptions` property like this:
+1.  **依存関係のインストール**:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+    ```bash
+    npm install
+    ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2.  **開発サーバーの起動**:
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
+    ```bash
+    npm run dev
+    ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
+3.  **ビルド**:
+    ```bash
+    npm run build
+    ```
