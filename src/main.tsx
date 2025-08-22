@@ -10,22 +10,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <BaseLayout>
-              <Home />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/vocabulary"
-          element={
-            <BaseLayout>
-              <Vocabulary />
-            </BaseLayout>
-          }
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/vocabulary" element={<Vocabulary />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
