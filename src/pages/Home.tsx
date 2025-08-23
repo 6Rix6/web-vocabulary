@@ -1,4 +1,5 @@
 import { VocabularyList } from "@/components/VocabularyList";
+import PWABadge from "@/components/PWABadge.tsx";
 import BaseLayout from "@/layouts/BaseLayout.tsx";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <main className="w-full">
         <VocabularyList />
       </main>
+      <PWABadge />
     </BaseLayout>
   );
 }
