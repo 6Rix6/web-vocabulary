@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Popup } from "@/components/Popup";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,14 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
   const [wordCount, setWordCount] = useState<number | null>(null);
   const [jsonData, setJsonData] = useState<WordData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setColor(defaultColorPalette);
+    setVocabularyName(null);
+    setWordCount(null);
+    setJsonData(null);
+    setError(null);
+  }, [isOpen]);
 
   /**
    * CSVファイルを読み込み、JSONに変換する関数
@@ -103,6 +111,11 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
     if (!prevList) {
       localStorage.setItem("vocabulary-list", JSON.stringify([newVocabulary]));
     } else {
+      const isExsist = prevList.some((item) => item.name === vocabularyName);
+      if (isExsist) {
+        setError("同じ名前の単語帳が存在します。");
+        return;
+      }
       const newList = [...prevList, newVocabulary];
       localStorage.setItem("vocabulary-list", JSON.stringify(newList));
     }
@@ -119,6 +132,7 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
   return (
     <Popup popupTitle={"単語帳を追加"} onClose={onClose} isOpen={isOpen}>
       <div className={"flex flex-col gap-3"}>
+        {error && <div className={"text-red-500 text-sm"}>{error}</div>}
         <div className={"grid w-full items-center gap-1.5"}>
           <Label htmlFor="book-title">タイトル</Label>
           <Input
@@ -135,7 +149,6 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
             accept={".csv"}
             onChange={handleFileChange}
           />
-          {error && <div className={"text-red-500 text-sm"}>{error}</div>}
         </div>
         <div className={"grid w-full items-center gap-1.5"}>
           <Label>ラベルカラー</Label>
