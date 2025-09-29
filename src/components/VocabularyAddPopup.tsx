@@ -13,6 +13,7 @@ import colors from "@/data/colors";
 import { Button } from "@/components/ui/button";
 import type { WordData } from "@/types/WordData";
 import type { VocabularyData } from "@/types/VocabularyData";
+import Papa from "papaparse";
 
 interface Props {
   onClose: () => void;
@@ -33,56 +34,46 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
    */
   const convertCsvToJson = (file: File) => {
     setError(null);
-    const reader = new FileReader();
 
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      if (!text) {
-        setError("ファイルの内容を読み込めませんでした。");
-        return;
-      }
+    Papa.parse(file, {
+      complete: (results) => {
+        try {
+          // 各行を WordData に変換
+          const data: WordData[] = results.data.map((row: any, idx: number) => {
+            if (row.length < 3) {
+              throw new Error(`CSVのフォーマットが不正です。(行 ${idx + 1})`);
+            }
 
-      try {
-        const lines = text.trim().split("\n");
-        const result: WordData[] = lines.map((line) => {
-          const parts = line.split(","); //カンマで分割
+            const number = parseInt(row[0], 10);
+            const word = row[1]?.trim();
+            const japanese = row[2]?.trim();
 
-          if (parts.length < 3) {
-            throw new Error("CSVのフォーマットが不正です。");
+            if (isNaN(number) || !word || !japanese) {
+              throw new Error(`不正なデータ行 (行 ${idx + 1}): ${row}`);
+            }
+
+            return {
+              number,
+              word,
+              japanese,
+            };
+          });
+
+          setJsonData(data);
+          setWordCount(data.length);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
           }
-
-          const number = parseInt(parts[0], 10);
-          const word = parts[1].trim();
-          const japanese = parts[2].trim();
-
-          // 不正なデータをチェック
-          if (isNaN(number) || !word || !japanese) {
-            throw new Error(`不正なデータ行: ${line}`);
-          }
-
-          return {
-            number: number,
-            word: word,
-            japanese: japanese,
-          };
-        });
-
-        setJsonData(result);
-        setWordCount(result.length);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
+          setJsonData(null);
         }
+      },
+      error: () => {
+        setError("ファイルの読み込み中にエラーが発生しました。");
         setJsonData(null);
-      }
-    };
-
-    reader.onerror = () => {
-      setError("ファイルの読み込み中にエラーが発生しました。");
-      setJsonData(null);
-    };
-
-    reader.readAsText(file);
+      },
+      skipEmptyLines: true, // 空行を無視
+    });
   };
 
   /**
