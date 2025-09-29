@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Header } from "../Header";
 
 import type { WordData } from "@/types/WordData.ts";
 
@@ -96,16 +97,6 @@ export const Quiz = ({ words, storageKey, className }: Props) => {
     } else {
       return { startIndex: 0, endIndex: 0 };
     }
-  };
-
-  const checkIsRangeValid = (): boolean => {
-    if (startIndex > endIndex) {
-      return false;
-    }
-    if (startIndex < 0) {
-      return false;
-    }
-    return endIndex < words.length;
   };
 
   const checkAnswer = (answer: string) => {
@@ -215,42 +206,20 @@ export const Quiz = ({ words, storageKey, className }: Props) => {
 
   return (
     <div className={"w-full"}>
-      <header className={"w-full bg-white border-b-4 border-black "}>
-        <div className={"w-full p-2"}>
-          <h1 className="text-center text-2xl md:text-3xl">{storageKey}</h1>
-        </div>
-        <div className={"w-full h-16 flex items-center justify-center"}>
-          <div className={"font-bold mr-2"}>範囲:</div>
-          <div className={"w-20"}>
-            <Input
-              inputMode={"numeric"}
-              type={"number"}
-              min={1}
-              max={words.length}
-              value={startIndex + 1}
-              onChange={(e) => setStartIndex(Number(e.target.value) - 1)}
-            />
-          </div>
-          <div>～</div>
-          <div className={"w-20"}>
-            <Input
-              inputMode={"numeric"}
-              type={"number"}
-              min={1}
-              max={words.length}
-              value={endIndex + 1}
-              onChange={(e) => setEndIndex(Number(e.target.value) - 1)}
-            />
-          </div>
-          <Button
-            className={"ml-2"}
-            onClick={() => handleSubmitButtonClick()}
-            disabled={!checkIsRangeValid()}
-          >
-            決定
-          </Button>
-        </div>
-      </header>
+      <Header
+        showRangeInput
+        onSubmit={handleSubmitButtonClick}
+        words={words}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        setStartIndex={setStartIndex}
+        setEndIndex={setEndIndex}
+        className="py-2"
+      >
+        <h1 className="text-3xl text-center font-mplus-rounded font-bold">
+          {storageKey}
+        </h1>
+      </Header>
       <div
         className={`w-full text-center container mx-auto p-6 py-12 space-y-6 ${className}`}
       >
@@ -282,7 +251,7 @@ export const Quiz = ({ words, storageKey, className }: Props) => {
             choices.map((choice, i) => (
               <div
                 key={i}
-                className={`p-2 rounded-base border-2 cursor-pointer transition-colors duration-300 ${
+                className={`p-2 rounded-base bg-white border-2 cursor-pointer transition-colors duration-300 ${
                   missedChoiceIndexes.includes(i)
                     ? "border-red-600"
                     : "border-border"
