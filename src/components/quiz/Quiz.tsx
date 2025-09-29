@@ -214,6 +214,7 @@ export const Quiz = ({ words, storageKey, className }: Props) => {
         endIndex={endIndex}
         setStartIndex={setStartIndex}
         setEndIndex={setEndIndex}
+        className="py-2"
       >
         <h1 className="text-3xl text-center font-mplus-rounded font-bold">
           {storageKey}

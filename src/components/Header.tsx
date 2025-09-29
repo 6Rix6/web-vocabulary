@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { WordData } from "@/types/WordData";
+import { cn } from "@/lib/utils";
 
 type BaseProps = {
   className?: string;
@@ -36,7 +37,10 @@ export const Header = (props: Props) => {
   };
   return (
     <header
-      className={`w-full bg-white border-b-4 border-black ${props.className}`}
+      className={cn(
+        "w-full bg-white border-b-4 border-foreground",
+        props.className
+      )}
     >
       <div className={"w-full p-2"}>{props.children}</div>
       {props.showRangeInput && (
