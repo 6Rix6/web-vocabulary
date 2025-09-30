@@ -13,6 +13,7 @@ export const initializeLocalStorage = () => {
     addVocabulary(item.vocabulary);
     localStorage.setItem(item.vocabulary.name, JSON.stringify(item.data));
   }
+  location.reload();
 };
 
 type ListItem = {
