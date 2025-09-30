@@ -1,4 +1,5 @@
-export const target1900 = [
+import { WordData } from "@/types/WordData";
+export const target1900: WordData[] = [
   {
     number: 1,
     word: "create",

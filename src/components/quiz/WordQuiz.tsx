@@ -31,7 +31,7 @@ const mode: answerModeType[] = [
   { name: "四択(日-英)", key: "fourChoiceReverse" },
 ];
 
-export const Quiz = ({ words, storageKey, className }: Props) => {
+export const WordQuiz = ({ words, storageKey, className }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(0);

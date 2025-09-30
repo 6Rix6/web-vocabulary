@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Quiz } from "./Quiz";
+import { WordQuiz } from "./WordQuiz";
+import { SentenceQuiz } from "./SentenceQuiz";
 import type { WordData } from "@/types/WordData";
-import type { VocabularyData } from "@/types/VocabularyData";
+import { defaultColor } from "@/data/colors";
+import { getVocabularyList } from "@/lib/storeVocabularyList";
+import { VocabularyData } from "@/types/VocabularyData";
 
 type Status = "loading" | "error" | "ready";
 
@@ -9,6 +12,7 @@ export const QuizContainer = () => {
   const [status, setStatus] = useState<Status>("loading");
   const [query, setQuery] = useState<string | null>(null);
   const [words, setWords] = useState<WordData[]>([]);
+  const [vocabulary, setVocabulary] = useState<VocabularyData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,15 +27,27 @@ export const QuizContainer = () => {
 
     setQuery(storageKey);
 
-    const data = localStorage.getItem(storageKey);
-    if (!data) {
+    const VList = getVocabularyList();
+    if (VList) {
+      const vocabulary = VList.find((item) => item.name === storageKey);
+      if (vocabulary) {
+        setVocabulary(vocabulary);
+      } else {
+        setErrorMessage(`"${storageKey}" に対応するデータが見つかりません。`);
+        setStatus("error");
+        return;
+      }
+    }
+
+    const wordData = localStorage.getItem(storageKey);
+    if (!wordData) {
       setErrorMessage(`"${storageKey}" に対応するデータが見つかりません。`);
       setStatus("error");
       return;
     }
 
     try {
-      const parsed = JSON.parse(data) as WordData[];
+      const parsed = JSON.parse(wordData) as WordData[];
       if (parsed.length === 0) {
         setErrorMessage(`"${storageKey}" のデータは空です。`);
         setStatus("error");
@@ -50,17 +66,16 @@ export const QuizContainer = () => {
   }, []);
 
   const getColor = (key: string) => {
-    const list = localStorage.getItem("vocabulary-list");
+    const list = getVocabularyList();
     if (list) {
-      const parsed = JSON.parse(list) as VocabularyData[];
-      const vocabulary = parsed.find((item) => item.name === key);
+      const vocabulary = list.find((item) => item.name === key);
       if (vocabulary) {
         return vocabulary.color;
       } else {
-        return "oklch(0.79 0.051 238.249)";
+        return defaultColor.main;
       }
     } else {
-      return "oklch(0.628 0.25 4.421)";
+      return defaultColor.main;
     }
   };
 
@@ -70,8 +85,14 @@ export const QuizContainer = () => {
   }
 
   if (status === "error") {
-    return <div style={{ color: "red" }}>{errorMessage}</div>;
+    return (
+      <div className="text-red-500 h-screen flex justify-center items-center text-2xl">
+        {errorMessage}
+      </div>
+    );
   }
 
-  return <Quiz storageKey={query!} words={words} />;
+  if (vocabulary?.kind === "word")
+    return <WordQuiz storageKey={query!} words={words} />;
+  else return <SentenceQuiz storageKey={query!} words={words} />;
 };

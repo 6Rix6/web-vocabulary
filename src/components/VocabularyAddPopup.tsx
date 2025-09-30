@@ -9,11 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import colors from "@/data/colors";
+import colors, { defaultColor } from "@/data/colors";
 import { Button } from "@/components/ui/button";
 import type { WordData } from "@/types/WordData";
 import type { VocabularyData } from "@/types/VocabularyData";
 import Papa from "papaparse";
+import {
+  addVocabulary,
+  getVocabularyList,
+  setVocabularyList,
+} from "@/lib/storeVocabularyList";
 
 interface Props {
   onClose: () => void;
@@ -21,15 +26,17 @@ interface Props {
 }
 
 export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
-  const defaultColorPalette = colors[10];
-  const [{ name, main }, setColor] = useState(defaultColorPalette);
+  const [{ name, main }, setColor] = useState(defaultColor);
   const [vocabularyName, setVocabularyName] = useState<string | null>(null);
   const [wordCount, setWordCount] = useState<number | null>(null);
+  const [vocabularyKind, setVocabularyKind] = useState<"word" | "sentence">(
+    "word"
+  );
   const [jsonData, setJsonData] = useState<WordData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setColor(defaultColorPalette);
+    setColor(defaultColor);
     setVocabularyName(null);
     setWordCount(null);
     setJsonData(null);
@@ -106,74 +113,96 @@ export const VocabularyAddPopup = ({ onClose, isOpen }: Props) => {
       name: vocabularyName,
       wordCount,
       color: main,
+      kind: vocabularyKind,
     };
-    const prevList = loadVocabularyList();
+    const prevList = getVocabularyList();
     if (!prevList) {
-      localStorage.setItem("vocabulary-list", JSON.stringify([newVocabulary]));
+      setVocabularyList([newVocabulary]);
     } else {
       const isExsist = prevList.some((item) => item.name === vocabularyName);
       if (isExsist) {
         setError("同じ名前の単語帳が存在します。");
         return;
       }
-      const newList = [...prevList, newVocabulary];
-      localStorage.setItem("vocabulary-list", JSON.stringify(newList));
+      addVocabulary(newVocabulary);
     }
     localStorage.setItem(vocabularyName, JSON.stringify(jsonData));
     onClose();
-  };
-
-  const loadVocabularyList = (): VocabularyData[] | null => {
-    const prevList = localStorage.getItem("vocabulary-list");
-    if (!prevList) return null;
-    return JSON.parse(prevList);
   };
 
   return (
     <Popup popupTitle={"単語帳を追加"} onClose={onClose} isOpen={isOpen}>
       <div className={"flex flex-col gap-3"}>
         {error && <div className={"text-red-500 text-sm"}>{error}</div>}
-        <div className={"grid w-full items-center gap-1.5"}>
+        <div className={"grid grid-cols-4 w-full items-center gap-1.5"}>
           <Label htmlFor="book-title">タイトル</Label>
           <Input
             id={"book-title"}
+            className={"col-span-3"}
             placeholder={"単語帳の名前"}
             onChange={(e) => setVocabularyName(e.target.value)}
           />
         </div>
-        <div className={"grid w-full items-center gap-1.5"}>
+        <div className={"grid grid-cols-4 w-full items-center gap-1.5"}>
           <Label htmlFor={"file"}>CSVファイル</Label>
           <Input
+            className="col-span-3"
             id={"file"}
             type={"file"}
             accept={".csv"}
             onChange={handleFileChange}
           />
         </div>
-        <div className={"grid w-full items-center gap-1.5"}>
-          <Label>ラベルカラー</Label>
-          <div className={"w-full"} id={"color-select"}>
-            <Select value={name} onValueChange={updateColor}>
-              <SelectTrigger
-                id="color"
-                className="bg-secondary-background text-foreground"
+        <div className={"grid grid-cols-4 w-full items-center gap-1.5"}>
+          <Label htmlFor="kind-select">種類</Label>
+          <div className={"col-span-3 flex justify-end"} id={"kind-select"}>
+            <div className="min-w-40">
+              <Select
+                value={vocabularyKind}
+                onValueChange={(value) =>
+                  setVocabularyKind(value as "word" | "sentence")
+                }
               >
-                <SelectValue placeholder="ラベルカラーを選択" />
-              </SelectTrigger>
-              <SelectContent className="bg-secondary-background text-foreground">
-                {colors.map(({ name, main }) => (
-                  <SelectItem key={name} value={name}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="size-4 rounded-full border-2 border-border"
-                        style={{ backgroundColor: main }}
-                      />
-                      {name}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  id="color"
+                  className="bg-secondary-background text-foreground"
+                >
+                  <SelectValue placeholder="ラベルカラーを選択" />
+                </SelectTrigger>
+                <SelectContent className="bg-secondary-background text-foreground">
+                  <SelectItem value={"word"}>単語帳</SelectItem>
+                  <SelectItem value={"sentence"}>例文集</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+        <div className={"grid grid-cols-4 w-full items-center gap-1.5"}>
+          <Label htmlFor="color-select">ラベルカラー</Label>
+          <div className={"col-span-3 flex justify-end"} id={"color-select"}>
+            <div className="min-w-40">
+              <Select value={name} onValueChange={updateColor}>
+                <SelectTrigger
+                  id="color"
+                  className="bg-secondary-background text-foreground"
+                >
+                  <SelectValue placeholder="ラベルカラーを選択" />
+                </SelectTrigger>
+                <SelectContent className="bg-secondary-background text-foreground">
+                  {colors.map(({ name, main }) => (
+                    <SelectItem key={name} value={name}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="size-4 rounded-full border-2 border-border"
+                          style={{ backgroundColor: main }}
+                        />
+                        {name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <div className={"flex justify-center items-center"}>
