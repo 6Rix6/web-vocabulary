@@ -12,7 +12,6 @@ import {
 import colors, { defaultColor } from "@/data/colors";
 import { Button } from "@/components/ui/button";
 import type { WordData } from "@/types/WordData";
-import type { VocabularyData } from "@/types/VocabularyData";
 import Papa from "papaparse";
 import {
   addVocabulary,
