@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VocabularyAddPopup } from "@/components/VocabularyAddPopup";
 import { initializeLocalStorage } from "@/lib/InitializeLocalStorage.ts";
 import type { VocabularyData } from "@/types/VocabularyData.ts";
+import { getVocabularyList } from "@/lib/storeVocabularyList";
 
 interface Props {
   className?: string;
@@ -12,20 +13,19 @@ interface Props {
 
 export const VocabularyList = ({ className }: Props) => {
   const [vocabularyList, setVocabularyList] = useState<VocabularyData[]>([]);
-  const [isInitialized, setIsInitialized] = useState(true);
+  //const [isInitialized, setIsInitialized] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    const data = localStorage.getItem("vocabulary-list");
+    const data = getVocabularyList();
     if (data) {
-      const vocabularyList = JSON.parse(data) as VocabularyData[];
-      setVocabularyList(vocabularyList);
-      setIsInitialized(true);
+      setVocabularyList(data);
+      //  setIsInitialized(true);
     } else {
       initializeLocalStorage();
-      setIsInitialized(false);
+      //setIsInitialized(false);
     }
-  }, [isInitialized]);
+  }, []);
 
   const handlePopupClose = () => {
     setShowPopup(false);
@@ -33,10 +33,9 @@ export const VocabularyList = ({ className }: Props) => {
   };
 
   const updateVocabularyList = () => {
-    const data = localStorage.getItem("vocabulary-list");
+    const data = getVocabularyList();
     if (data) {
-      const vocabularyList = JSON.parse(data) as VocabularyData[];
-      setVocabularyList(vocabularyList);
+      setVocabularyList(data);
     }
   };
 
@@ -52,9 +51,9 @@ export const VocabularyList = ({ className }: Props) => {
         <a
           key={i}
           href={`/vocabulary?name=${item.name}`}
-          className="w-full max-w-sm shrink-0"
+          className="w-full max-w-xs shrink-0"
         >
-          <Card className="w-full relative overflow-hidden">
+          <Card className="w-full relative overflow-hidden bg-white">
             <CardHeader
               className={"text-3xl font-bold z-20"}
               style={{ backgroundColor: item.color }}
@@ -77,18 +76,18 @@ export const VocabularyList = ({ className }: Props) => {
                   "absolute -bottom-10 -right-10 w-64 h-64 bg-gray-300 rounded-full z-0 flex items-center justify-center gap-3"
                 }
               >
-                {/*<a>*/}
+                {/* <a>*/}
                 {/*  <Pen />*/}
                 {/*</a>*/}
                 {/*<a>*/}
                 {/*  <Trash color={"red"} />*/}
-                {/*</a>*/}
+                {/*</a> */}
               </div>
             </CardContent>
           </Card>
         </a>
       ))}
-      <Card className="w-full max-w-sm shrink-0">
+      <Card className="w-full max-w-xs shrink-0 bg-white">
         <CardHeader />
         <CardContent
           className={"flex flex-col items-center justify-center gap-6 h-[50vh]"}
