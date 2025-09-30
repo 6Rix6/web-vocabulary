@@ -87,7 +87,7 @@ export const VocabularyList = ({ className }: Props) => {
           </Card>
         </a>
       ))}
-      <Card className="w-full max-w-xs shrink-0 bg-white">
+      <Card className="w-full max-w-xs shrink-0 bg-background">
         <CardHeader />
         <CardContent
           className={"flex flex-col items-center justify-center gap-6 h-[50vh]"}
