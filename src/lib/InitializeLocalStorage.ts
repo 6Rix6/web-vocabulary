@@ -1,5 +1,5 @@
 import type { VocabularyData } from "@/types/VocabularyData";
-import { addVocabulary, setVocabularyList } from "./storeVocabularyList";
+import { setVocabularyList } from "./storeVocabularyList";
 import { WordData } from "@/types/WordData";
 import colors from "@/data/colors";
 
@@ -21,7 +21,7 @@ type ListItem = {
   data: WordData[];
 };
 
-const initialVocabularyList: ListItem[] = [
+export const initialVocabularyList: ListItem[] = [
   {
     vocabulary: {
       name: "ターゲット1900",
