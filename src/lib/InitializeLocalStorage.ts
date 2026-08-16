@@ -9,10 +9,10 @@ import { target1000 } from "@/data/target1000";
 export const initializeLocalStorage = () => {
   if (typeof window === "undefined") return;
   setVocabularyList([]);
-  for (const item of initialVocabularyList) {
-    addVocabulary(item.vocabulary);
-    localStorage.setItem(item.vocabulary.name, JSON.stringify(item.data));
-  }
+  // for (const item of initialVocabularyList) {
+   // addVocabulary(item.vocabulary);
+    // localStorage.setItem(item.vocabulary.name, JSON.stringify(item.data));
+  // }
   location.reload();
 };
 
